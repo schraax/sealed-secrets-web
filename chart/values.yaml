@@ -23,7 +23,7 @@ sealedSecrets:
   # -- Namespace of the sealed secrets service
   namespace: sealed-secrets
   # -- Name of the sealed secrets service
-  serviceName: sealed-secrets
+  serviceName: my-sealed-secrets
   # -- URL sealed secrets certificate (required if sealed secrets is not reachable with in cluster service)
   #    Validation api will be disabled when cert URL is used.
   certURL: ""
@@ -68,9 +68,9 @@ serviceAccount:
 
 service:
   # -- Sets the type of the Service
-  type: ClusterIP
+  type: LoadBalancer
   # -- Service port
-  port: 80
+  port: 81
   # -- Service annotations
   annotations: {}
   # -- Kubernetes Service clusterIP

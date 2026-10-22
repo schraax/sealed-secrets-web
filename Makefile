@@ -31,10 +31,10 @@ mocks: tb.mockgen
 	$(TB_MOCKGEN) -destination pkg/mocks/seal/mock.go --package seal github.com/bakito/sealed-secrets-web/pkg/seal Sealer
 
 build:
-	podman build --build-arg VERSION=dev --build-arg BUILD=dev --build-arg TARGETPLATFORM=linux/amd64 -t sealed-secrets-web .
+	podman build --cgroup-manager=cgroupfs --build-arg VERSION=dev --build-arg BUILD=dev --build-arg BUILDPLATFORM=linux/amd64 --build-arg TARGETPLATFORM=linux/amd64 -t sealed-secrets-web .
 
 build-arm:
-	podman build --build-arg VERSION=dev --build-arg BUILD=dev --build-arg TARGETPLATFORM=linux/arm64 -t sealed-secrets-web .
+	podman build --build-arg VERSION=dev --build-arg BUILD=dev --build-arg BUILDPLATFORM=linux/amd64 --build-arg TARGETPLATFORM=linux/arm64 -t sealed-secrets-web .
 
 helm-docs: tb.helm-docs
 	@$(TB_HELM_DOCS)

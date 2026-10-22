@@ -19,6 +19,7 @@ type Sealer interface {
 	Raw(data Raw) ([]byte, error)
 	Certificate(ctx context.Context) ([]byte, error)
 	Seal(outputFormat string, secret io.Reader) ([]byte, error)
+	SealWithScope(outputFormat string, scope string, secret io.Reader) ([]byte, error)
 	Validate(ctx context.Context, secret io.Reader) error
 }
 
@@ -69,6 +70,14 @@ func (a *apiSealer) Certificate(ctx context.Context) ([]byte, error) {
 }
 
 func (a *apiSealer) Seal(outputFormat string, secret io.Reader) ([]byte, error) {
+	return a.SealWithScope(outputFormat, "", secret)
+}
+
+func (a *apiSealer) SealWithScope(outputFormat string, scope string, secret io.Reader) ([]byte, error) {
+	sealingScope := v1alpha1.DefaultScope
+	if scope != "" {
+		_ = sealingScope.Set(scope)
+	}
 	var buf bytes.Buffer
 	if err := kubeseal.Seal(
 		a.clientConfig,
@@ -77,7 +86,7 @@ func (a *apiSealer) Seal(outputFormat string, secret io.Reader) ([]byte, error) 
 		&buf,
 		scheme.Codecs,
 		a.pubKey,
-		v1alpha1.DefaultScope,
+		sealingScope,
 		false,
 		"",
 		"",

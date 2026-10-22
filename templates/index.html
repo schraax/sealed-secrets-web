@@ -29,6 +29,27 @@
       <v-main>
         <v-container fluid fill-height grid-list-xl>
           <v-layout wrap>
+            <v-flex xs12>
+              <v-card flat>
+                <v-card-text class="py-2">
+                  <v-row align="center" no-gutters>
+                    <v-col cols="auto" class="mr-3">
+                      <span class="body-2 grey--text text--darken-1">Sealing Scope:</span>
+                    </v-col>
+                    <v-col cols="auto">
+                      <v-btn-toggle v-model="sealingScope" mandatory dense>
+                        <v-btn value="strict" small>Strict</v-btn>
+                        <v-btn value="namespace-wide" small>Namespace-wide</v-btn>
+                        <v-btn value="cluster-wide" small>Cluster-wide</v-btn>
+                      </v-btn-toggle>
+                    </v-col>
+                    <v-col cols="auto" class="ml-4">
+                      <span class="caption grey--text">{{"{{scopeDescription}}"}}</span>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-flex>
             <v-flex xs6>
               <v-card height="100%">
                 <v-card-title>Secret
@@ -127,6 +148,7 @@
           editor2Content: '',
           secretFormat: 'yaml',
           sealedSecretFormat: 'yaml',
+          sealingScope: 'strict',
           options: {
             selectionStyle: "line",
             highlightActiveLine: true,
@@ -148,6 +170,14 @@
         }
       },
       computed: {
+        scopeDescription() {
+          const descriptions = {
+            'strict': 'Sealed secret is bound to a specific name and namespace',
+            'namespace-wide': 'Sealed secret can be renamed within the same namespace',
+            'cluster-wide': 'Sealed secret can be used in any namespace with any name',
+          }
+          return descriptions[this.sealingScope] || ''
+        },
         snackbar: {
           get() {
             return this.message !== ''
@@ -188,7 +218,7 @@
       },
       methods : {
         seal() {
-          axios.post('{{.WebContext}}api/kubeseal', this.editor1Content,
+          axios.post('{{.WebContext}}api/kubeseal?scope=' + this.sealingScope, this.editor1Content,
             { headers: {
                 'Content-Type': this.contentType(this.secretFormat),
                 'Accept': this.contentType(this.sealedSecretFormat)},

@@ -16,7 +16,7 @@ func (h *Handler) KubeSeal(c *gin.Context) {
 		return
 	}
 
-	ss, err := h.sealer.Seal(outputFormat, c.Request.Body)
+	ss, err := h.sealer.Seal(outputFormat, c.Query("scope"), c.Request.Body)
 	if err != nil {
 		log.Printf("Error in %s: %v\n", Sanitize(c.Request.URL.Path), err)
 		contextNegotiate(c, http.StatusInternalServerError, gin.Negotiate{

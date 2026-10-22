@@ -2,6 +2,7 @@
 FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS builder
 WORKDIR /go/src/app
 
+USER 0
 RUN apk update && apk add upx
 
 ARG VERSION=main
